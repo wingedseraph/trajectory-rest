@@ -1,11 +1,18 @@
 import type { ReactNode } from "react";
 
+import type { Car } from "@/lib/apiTypes";
+import { use } from "react";
+
+import { getCars } from "@/api/getCars";
 import { ErrorBoundary } from "@/shared/ui/ErrorBoundary/ErrorBoundary";
+
+const carsPromise = getCars();
 
 export function Provider({
   children,
 }: {
-  children: ReactNode;
+  children: (data: Car[]) => ReactNode;
 }) {
-  return <ErrorBoundary>{children}</ErrorBoundary>;
+  const cars = use<Car[]>(carsPromise);
+  return <ErrorBoundary>{children(cars)}</ErrorBoundary>;
 }
