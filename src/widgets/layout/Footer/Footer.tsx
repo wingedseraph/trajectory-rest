@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <div className="flex items-center justify-end gap-2">
+    <footer className="flex items-center justify-end gap-2">
       <a
         className="flex w-fit items-center justify-center text-xl"
         target="_blank"
@@ -9,6 +9,6 @@ export default function Footer() {
       >
         /github
       </a>
-    </div>
+    </footer>
   );
 }
