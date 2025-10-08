@@ -7,10 +7,9 @@ export function carsReducer(state: CarsState, action: CarsAction): CarsState {
       return { ...state, cars: action.payload };
     }
     case "create": {
-      const nextId
-        = state.cars.length > 0
-          ? Number(...state.cars.map(car => car.id)) + 1
-          : 1;
+      const nextId = state.cars.length > 0
+        ? Math.max(...state.cars.map(car => car.id)) + 1
+        : 1;
       const newCar: Car = {
         id: nextId,
         name: action.payload.name,

@@ -19,10 +19,12 @@ function CarActions({ onCreate }: Props) {
 
   const handleEditSubmit = (name: string, price: number) => {
     dispatch({ type: "editByName", payload: { name, price } });
+    setIsEditModalOpen(false);
   };
 
   const handleDelete = (id: number) => {
     dispatch({ type: "delete", payload: { id } });
+    setIsDeleteModalOpen(false);
   };
 
   return (

@@ -1,7 +1,7 @@
 import type { SortableColumn } from "./TableView.types";
 import type { Car } from "@/api/getCars.types";
 import { ArrowDown, ArrowUp } from "lucide-react";
-import { memo, useMemo } from "react";
+import { memo, useId, useMemo } from "react";
 import { useCarsDispatch, useCarsState } from "@/app/store";
 import { Button } from "@/shared/ui/Button/button";
 import {
@@ -19,6 +19,7 @@ function TableView({ cars }: { cars: Car[] }) {
   const state = useCarsState();
   const dispatch = useCarsDispatch();
   const base = state.cars.length ? state.cars : cars;
+  const tableId = useId();
 
   const data = useMemo(() => {
     return sortCars(base, state.sort.by, state.sort.direction);
@@ -61,10 +62,10 @@ function TableView({ cars }: { cars: Car[] }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data.map(car => (
-          <TableRow key={car.id}>
+        {data.map((car, index) => (
+          <TableRow key={`${tableId}-car-${car.id}-${index}`}>
             {columns.map(column => (
-              <TableCell key={column}>{String(car[column])}</TableCell>
+              <TableCell key={`${tableId}-${car.id}-${column}`}>{String(car[column])}</TableCell>
             ))}
           </TableRow>
         ))}

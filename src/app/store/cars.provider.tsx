@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type { Car } from "@/api/getCars.types";
-import type { CarsState } from "@/app/store/cars.types";
-import { useEffect, useMemo, useReducer } from "react";
+import type { CarsAction } from "@/app/store/cars.types";
+import { useReducer } from "react";
 import { CarsDispatchContext, CarsStateContext } from "@/app/store/cars.context";
 import { isCar, LS_KEY } from "@/app/store/cars.persistence";
 import { carsReducer } from "@/app/store/cars.reducer";
@@ -9,24 +9,28 @@ import { useLocalStorage } from "@/shared/hooks/useLocalStorage";
 
 export function CarsProvider({ initialCars, children }: { initialCars: Car[]; children: ReactNode }) {
   const { valueFromLS, setValueToLS } = useLocalStorage(LS_KEY);
+
+  const savedCars = isCar(valueFromLS);
+  const carsToUse = savedCars.length > 0 ? savedCars : initialCars;
+
   const [state, dispatch] = useReducer(carsReducer, {
-    cars: [],
+    cars: carsToUse,
     sort: { by: null, direction: "asc" },
-  } satisfies CarsState);
+  });
 
-  useEffect(() => {
-    const LSCars = isCar(valueFromLS);
-    dispatch({ type: "hydrate", payload: LSCars.length ? LSCars : initialCars });
-  }, [initialCars, valueFromLS]);
+  const saveCars = (newCars: Car[]) => {
+    setValueToLS(JSON.stringify(newCars));
+  };
 
-  useEffect(() => {
-    setValueToLS(JSON.stringify(state.cars));
-  }, [state.cars, setValueToLS]);
+  const dispatchWithSave = (action: CarsAction) => {
+    dispatch(action);
+    const newState = carsReducer(state, action);
+    saveCars(newState.cars);
+  };
 
-  const stateValue = useMemo(() => state, [state]);
   return (
-    <CarsDispatchContext.Provider value={dispatch}>
-      <CarsStateContext.Provider value={stateValue}>{children}</CarsStateContext.Provider>
+    <CarsDispatchContext.Provider value={dispatchWithSave}>
+      <CarsStateContext.Provider value={state}>{children}</CarsStateContext.Provider>
     </CarsDispatchContext.Provider>
   );
 }
