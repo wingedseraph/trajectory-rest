@@ -10,7 +10,12 @@ import Layout from "@/widgets/layout/layout";
 export default function App() {
   return (
     <Layout>
-      <Suspense fallback={<Spinner />}>
+      <Suspense fallback={(
+        <div className="flex items-center justify-center h-screen w-screen">
+          <Spinner />
+        </div>
+      )}
+      >
         <Provider>
           {cars => (
             <CarsProvider initialCars={cars}>
