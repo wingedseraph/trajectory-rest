@@ -4,11 +4,7 @@ import type { Car } from "@/api/getCars.types";
 import { memo, useEffect, useRef } from "react";
 import { createMap, updateMap } from "./MapClient";
 
-type MapViewProps = {
-  cars: Car[];
-};
-
-function MapView({ cars }: MapViewProps) {
+function MapView({ cars }: { cars: Car[] }) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<Map | null>(null);
 
@@ -32,7 +28,7 @@ function MapView({ cars }: MapViewProps) {
     };
   }, [cars]);
 
-  return <div ref={mapRef} style={{ height: "400px", width: "100%" }} />;
+  return <div ref={mapRef} className="h-96 w-full" />;
 }
 
 export default memo(MapView);
