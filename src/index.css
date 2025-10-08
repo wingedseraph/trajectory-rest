@@ -56,6 +56,6 @@
     @apply font-heading;
   }
   a {
-    @apply py-2 hover:bg-main transition-all;
+    @apply py-2 transition-all hover:translate-x-boxShadowX hover:translate-y-boxShadowY;
   }
 }
