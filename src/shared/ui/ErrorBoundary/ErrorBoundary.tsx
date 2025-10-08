@@ -26,7 +26,7 @@ export class ErrorBoundary extends Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex min-h-screen items-center justify-center p-4">
+        <div className="flex flex-col gap-5 min-h-screen items-center justify-center p-4">
           <h1>Something went wrong</h1>
           <Button>
             <a href="..">Refresh Page</a>
