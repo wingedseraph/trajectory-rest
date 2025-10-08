@@ -18,7 +18,7 @@ export default function Modal({ children, isOpen, onClose }: ModalProps) {
 
   return createPortal(
     <div
-      className="fixed inset-0 z-10 flex animate-slideDown items-center justify-center duration-75"
+      className="fixed inset-0 z-10 flex bg-overlay/70 items-center justify-center"
       role="dialog"
       aria-modal="true"
     >
