@@ -1,51 +1,41 @@
-import type { FormEvent } from "react";
-import { useState } from "react";
+import type { CreateCarFormData } from "./useCarForm";
+import type { isOpenType } from "@/shared/ui/Modal/modal";
 import { Button } from "@/shared/ui/Button/button";
+import { Error } from "@/shared/ui/Error/error";
 import { Input } from "@/shared/ui/Input/input";
 import Modal from "@/shared/ui/Modal/modal";
 import { Select } from "@/shared/ui/Select/select";
+import { colors, useCreateCarForm } from "./useCarForm";
 
-const colors = ["red", "black", "white", "blue", "silver"] as const;
-type Color = typeof colors[number];
-const isColor = (value: string): value is Color => (colors as readonly string[]).includes(value);
-
-type Props = {
-  isOpen: boolean;
+type Props = isOpenType & {
   onClose: () => void;
-  onSubmit: (data: { name: string; model: string; year: number; color: Color; price: number }) => void;
+  onSubmit: (data: CreateCarFormData) => void;
 };
 
 export default function CreateCarModal({ isOpen, onClose, onSubmit }: Props) {
-  const [name, setName] = useState("");
-  const [model, setModel] = useState("");
-  const [year, setYear] = useState(0);
-  const [color, setColor] = useState<Color>("red");
-  const [price, setPrice] = useState(0);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    reset,
+  } = useCreateCarForm();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (name.trim() && model.trim() && year > 0 && price > 0) {
-      onSubmit({ name: name.trim(), model: model.trim(), year, color, price });
-      onClose();
-    }
-  };
-
-  const handleClose = () => {
-    setName("");
-    setModel("");
-    setYear(0);
-    setColor("red");
-    setPrice(0);
+  const onFormSubmit = (data: CreateCarFormData) => {
+    onSubmit(data);
+    reset();
     onClose();
   };
 
-  const isFormValid = name.trim() && model.trim() && year > 0 && price > 0;
+  const handleClose = () => {
+    reset();
+    onClose();
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>
       <div className="space-y-6">
         <h2 className="text-xl font-semibold text-main-foreground">Create a new car</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
           <div className="space-y-2">
             <label htmlFor="create-name" className="text-sm font-medium text-main-foreground">
               Name *
@@ -53,12 +43,10 @@ export default function CreateCarModal({ isOpen, onClose, onSubmit }: Props) {
             <Input
               id="create-name"
               type="text"
-              pattern="[A-Za-z]*"
               placeholder="Enter car name"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              required
+              {...register("name")}
             />
+            <Error>{errors.name?.message}</Error>
           </div>
           <div className="space-y-2">
             <label htmlFor="create-model" className="text-sm font-medium text-main-foreground">
@@ -67,12 +55,10 @@ export default function CreateCarModal({ isOpen, onClose, onSubmit }: Props) {
             <Input
               id="create-model"
               type="text"
-              pattern="[A-Za-z]*"
               placeholder="Enter car model"
-              value={model}
-              onChange={e => setModel(e.target.value)}
-              required
+              {...register("model")}
             />
+            <Error>{errors.model?.message}</Error>
           </div>
           <div className="space-y-2">
             <label htmlFor="create-year" className="text-sm font-medium text-main-foreground">
@@ -82,10 +68,9 @@ export default function CreateCarModal({ isOpen, onClose, onSubmit }: Props) {
               id="create-year"
               type="number"
               placeholder="Enter year"
-              value={year}
-              onChange={e => setYear(Number(e.target.value) || 0)}
-              required
+              {...register("year", { valueAsNumber: true })}
             />
+            <Error>{errors.year?.message}</Error>
           </div>
           <div className="space-y-2">
             <label htmlFor="create-color" className="text-sm font-medium text-main-foreground">
@@ -93,9 +78,7 @@ export default function CreateCarModal({ isOpen, onClose, onSubmit }: Props) {
             </label>
             <Select
               id="create-color"
-              value={color}
-              onChange={e => (isColor(e.target.value) ? setColor(e.target.value) : undefined)}
-              required
+              {...register("color")}
             >
               {colors.map(color => (
                 <option key={color} value={color}>
@@ -103,6 +86,7 @@ export default function CreateCarModal({ isOpen, onClose, onSubmit }: Props) {
                 </option>
               ))}
             </Select>
+            <Error>{errors.color?.message}</Error>
           </div>
           <div className="space-y-2">
             <label htmlFor="create-price" className="text-sm font-medium text-main-foreground">
@@ -111,17 +95,17 @@ export default function CreateCarModal({ isOpen, onClose, onSubmit }: Props) {
             <Input
               id="create-price"
               type="number"
+              step="0.01"
               placeholder="Enter price"
-              value={price}
-              onChange={e => setPrice(Number(e.target.value) || 0)}
-              required
+              {...register("price", { valueAsNumber: true })}
             />
+            <Error>{errors.price?.message}</Error>
           </div>
           <div className="flex gap-2 justify-between pt-4">
             <Button type="button" variant="reverse" onClick={handleClose}>
               Cancel
             </Button>
-            <Button type="submit" variant="default" disabled={!isFormValid}>
+            <Button type="submit" variant="default" disabled={!isValid}>
               Create car
             </Button>
           </div>

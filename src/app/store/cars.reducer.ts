@@ -26,7 +26,14 @@ export function carsReducer(state: CarsState, action: CarsAction): CarsState {
     case "editByName": {
       const { name, price } = action.payload;
       const cars = state.cars.map(car =>
-        car.name === name ? { ...car, price } : car,
+        car.name === name ? { ...car, name, price } : car,
+      );
+      return { ...state, cars };
+    }
+    case "editById": {
+      const { id, name, price } = action.payload;
+      const cars = state.cars.map(car =>
+        car.id === id ? { ...car, name, price } : car,
       );
       return { ...state, cars };
     }

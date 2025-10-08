@@ -9,6 +9,7 @@ type ModalProps = {
   onClose: () => void;
   title?: string;
 };
+export type isOpenType = Pick<ModalProps, "isOpen">;
 
 export default function Modal({ children, isOpen, onClose }: ModalProps) {
   const modalRef = useModal(isOpen, onClose);

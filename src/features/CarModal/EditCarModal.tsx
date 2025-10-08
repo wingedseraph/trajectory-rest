@@ -1,10 +1,12 @@
-import { useState } from "react";
+import type { EditCarFormData } from "./useCarForm";
+import type { isOpenType } from "@/shared/ui/Modal/modal";
 import { Button } from "@/shared/ui/Button/button";
+import { Error } from "@/shared/ui/Error/error";
 import { Input } from "@/shared/ui/Input/input";
 import Modal from "@/shared/ui/Modal/modal";
+import { useEditCarForm } from "./useCarForm";
 
-type Props = {
-  isOpen: boolean;
+type Props = isOpenType & {
   onClose: () => void;
   onSubmit: (name: string, price: number) => void;
   initialName?: string;
@@ -18,23 +20,23 @@ export default function EditCarModal({
   initialName = "",
   initialPrice = 0,
 }: Props) {
-  const [name, setName] = useState(initialName);
-  const [price, setPrice] = useState(initialPrice.toString());
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    reset,
+  } = useEditCarForm({
+    name: initialName,
+    price: initialPrice,
+  });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const priceNumber = Number(price);
-    if (name.trim() && !Number.isNaN(priceNumber) && priceNumber > 0) {
-      onSubmit(name.trim(), priceNumber);
-      onClose();
-    }
+  const onFormSubmit = (data: EditCarFormData) => {
+    onSubmit(data.name, data.price);
+    onClose();
   };
 
-  const isFormValid = name.trim() && !Number.isNaN(Number(price)) && Number(price) > 0;
-
   const handleClose = () => {
-    setName(initialName);
-    setPrice(initialPrice.toString());
+    reset();
     onClose();
   };
 
@@ -42,39 +44,37 @@ export default function EditCarModal({
     <Modal isOpen={isOpen} onClose={handleClose}>
       <div className="space-y-6">
         <h2 className="text-xl font-semibold text-main-foreground">Edit car</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
           <div className="space-y-2">
             <label htmlFor="edit-name" className="text-sm font-medium text-main-foreground">
-              Name
+              Name *
             </label>
             <Input
               id="edit-name"
               type="text"
-              pattern="[A-Za-z]*"
               placeholder="Enter car name"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              required
+              {...register("name")}
             />
+            <Error>{errors.name?.message}</Error>
           </div>
           <div className="space-y-2">
             <label htmlFor="edit-price" className="text-sm font-medium text-main-foreground">
-              Price
+              Price *
             </label>
             <Input
               id="edit-price"
               type="number"
+              step="0.01"
               placeholder="Enter price"
-              value={price}
-              onChange={e => setPrice(e.target.value)}
-              required
+              {...register("price", { valueAsNumber: true })}
             />
+            <Error>{errors.price?.message}</Error>
           </div>
           <div className="flex gap-2 justify-between pt-4">
             <Button type="button" variant="reverse" onClick={handleClose}>
               Cancel
             </Button>
-            <Button type="submit" variant="default" disabled={!isFormValid}>
+            <Button type="submit" variant="default" disabled={!isValid}>
               Update car
             </Button>
           </div>

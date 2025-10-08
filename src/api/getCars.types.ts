@@ -19,11 +19,11 @@ const colorSchema = z.union([
 
 export const carSchema = z.object({
   id: z.number().positive(),
-  name: z.string().min(1),
-  model: z.string().min(1),
-  year: z.number().min(1),
+  name: z.string().min(1, "Name is required"),
+  model: z.string().min(1, "Model is required"),
+  year: z.number().min(1, "Year is required"),
   color: colorSchema,
-  price: z.number().positive(),
+  price: z.number().positive("Price must be greater than 0"),
   ...coordinatesSchema.shape,
 });
 

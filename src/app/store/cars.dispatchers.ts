@@ -8,6 +8,10 @@ export function editCarByName(name: string, price: number): CarsAction {
   return { type: "editByName", payload: { name, price } };
 }
 
+export function editCarById(id: number, name: string, price: number): CarsAction {
+  return { type: "editById", payload: { id, name, price } };
+}
+
 export function deleteCar(id: number): CarsAction {
   return { type: "delete", payload: { id } };
 }

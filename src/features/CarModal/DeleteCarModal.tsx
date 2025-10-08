@@ -1,39 +1,40 @@
-import type { FormEvent } from "react";
-import { useState } from "react";
+import type { DeleteCarFormData } from "./useCarForm";
+import type { isOpenType } from "@/shared/ui/Modal/modal";
 import { Button } from "@/shared/ui/Button/button";
+import { Error } from "@/shared/ui/Error/error";
 import { Input } from "@/shared/ui/Input/input";
 import Modal from "@/shared/ui/Modal/modal";
+import { useDeleteCarForm } from "./useCarForm";
 
-type Props = {
-  isOpen: boolean;
+type Props = isOpenType & {
   onClose: () => void;
   onDelete: (id: number) => void;
 };
 
 export default function DeleteCarModal({ isOpen, onClose, onDelete }: Props) {
-  const [id, setId] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    reset,
+  } = useDeleteCarForm();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const carId = Number(id);
-    if (!Number.isNaN(carId) && carId > 0) {
-      onDelete(carId);
-      onClose();
-    }
-  };
-
-  const handleClose = () => {
-    setId("");
+  const onFormSubmit = (data: DeleteCarFormData) => {
+    onDelete(data.id);
+    reset();
     onClose();
   };
 
-  const isFormValid = id.trim() && !Number.isNaN(Number(id)) && Number(id) > 0;
+  const handleClose = () => {
+    reset();
+    onClose();
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>
       <div className="space-y-6">
         <h2 className="text-xl font-semibold text-main-foreground">Delete car</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
           <div className="space-y-2">
             <label htmlFor="delete-id" className="text-sm font-medium text-main-foreground">
               Car ID *
@@ -42,16 +43,15 @@ export default function DeleteCarModal({ isOpen, onClose, onDelete }: Props) {
               id="delete-id"
               type="number"
               placeholder="Enter car ID to delete"
-              value={id}
-              onChange={e => setId(e.target.value)}
-              required
+              {...register("id", { valueAsNumber: true })}
             />
+            <Error>{errors.id?.message}</Error>
           </div>
           <div className="flex gap-2 justify-between pt-4">
             <Button type="button" variant="reverse" onClick={handleClose}>
               Cancel
             </Button>
-            <Button type="submit" variant="default" disabled={!isFormValid}>
+            <Button type="submit" variant="default" disabled={!isValid}>
               Delete car
             </Button>
           </div>

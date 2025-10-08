@@ -11,6 +11,7 @@ export type CarsAction
   = | { type: "hydrate"; payload: Car[] }
     | { type: "create"; payload: CarFormValues }
     | { type: "editByName"; payload: { name: string; price: number } }
+    | { type: "editById"; payload: { id: number; name: string; price: number } }
     | { type: "delete"; payload: { id: number } }
     | {
       type: "sort";
