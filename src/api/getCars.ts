@@ -1,5 +1,5 @@
-import type { Car } from "@/lib/apiTypes";
-import { carsSchema, getErrorMessageFromUnknown } from "@/lib/apiTypes";
+import type { Car } from "@/api/getCars.types";
+import { carsSchema, getErrorMessageFromUnknown } from "@/api/getCars.types";
 
 const JSON_URL
   = "https://ofc-test-01.tspb.su/test-task/vehicles" as const;
