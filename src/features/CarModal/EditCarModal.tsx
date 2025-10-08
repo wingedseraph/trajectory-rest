@@ -71,7 +71,7 @@ export default function EditCarModal({
             />
           </div>
           <div className="flex gap-2 justify-between pt-4">
-            <Button type="button" variant="neutral" onClick={handleClose}>
+            <Button type="button" variant="reverse" onClick={handleClose}>
               Cancel
             </Button>
             <Button type="submit" variant="default" disabled={!isFormValid}>
