@@ -11,7 +11,7 @@ export default function App() {
   return (
     <Layout>
       <Suspense fallback={(
-        <div className="flex items-center justify-center h-screen w-screen">
+        <div className="flex items-center justify-center h-screen">
           <Spinner />
         </div>
       )}
