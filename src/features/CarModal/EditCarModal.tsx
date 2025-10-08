@@ -1,5 +1,7 @@
 import type { EditCarFormData } from "./useCarForm";
 import type { isOpenType } from "@/shared/ui/Modal/modal";
+import { useCarsState } from "@/app/store";
+import { useValidationError } from "@/shared/hooks/useValidationError";
 import { Button } from "@/shared/ui/Button/button";
 import { Error } from "@/shared/ui/Error/error";
 import { Input } from "@/shared/ui/Input/input";
@@ -20,6 +22,8 @@ export default function EditCarModal({
   initialName = "",
   initialPrice = 0,
 }: Props) {
+  const state = useCarsState();
+  const { error, setValidationError, clearError } = useValidationError();
   const {
     register,
     handleSubmit,
@@ -31,11 +35,18 @@ export default function EditCarModal({
   });
 
   const onFormSubmit = (data: EditCarFormData) => {
+    clearError();
+    const carExists = state.cars.some(car => car.name === data.name);
+    if (!carExists) {
+      setValidationError(`Car with name "${data.name}" not found`);
+      return;
+    }
     onSubmit(data.name, data.price);
     onClose();
   };
 
   const handleClose = () => {
+    clearError();
     reset();
     onClose();
   };
@@ -44,6 +55,7 @@ export default function EditCarModal({
     <Modal isOpen={isOpen} onClose={handleClose}>
       <div className="space-y-6">
         <h2 className="text-xl font-semibold text-main-foreground">Edit car</h2>
+        {error && <Error>{error}</Error>}
         <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
           <div className="space-y-2">
             <label htmlFor="edit-name" className="text-sm font-medium text-main-foreground">
@@ -64,7 +76,6 @@ export default function EditCarModal({
             <Input
               id="edit-price"
               type="number"
-              step="0.01"
               placeholder="Enter price"
               {...register("price", { valueAsNumber: true })}
             />

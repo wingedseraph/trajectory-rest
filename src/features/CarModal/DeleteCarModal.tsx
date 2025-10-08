@@ -1,5 +1,7 @@
 import type { DeleteCarFormData } from "./useCarForm";
 import type { isOpenType } from "@/shared/ui/Modal/modal";
+import { useCarsState } from "@/app/store";
+import { useValidationError } from "@/shared/hooks/useValidationError";
 import { Button } from "@/shared/ui/Button/button";
 import { Error } from "@/shared/ui/Error/error";
 import { Input } from "@/shared/ui/Input/input";
@@ -12,6 +14,8 @@ type Props = isOpenType & {
 };
 
 export default function DeleteCarModal({ isOpen, onClose, onDelete }: Props) {
+  const state = useCarsState();
+  const { error, setValidationError, clearError } = useValidationError();
   const {
     register,
     handleSubmit,
@@ -20,12 +24,19 @@ export default function DeleteCarModal({ isOpen, onClose, onDelete }: Props) {
   } = useDeleteCarForm();
 
   const onFormSubmit = (data: DeleteCarFormData) => {
+    clearError();
+    const carExists = state.cars.some(car => car.id === data.id);
+    if (!carExists) {
+      setValidationError(`Car with ID "${data.id}" not found`);
+      return;
+    }
     onDelete(data.id);
     reset();
     onClose();
   };
 
   const handleClose = () => {
+    clearError();
     reset();
     onClose();
   };
@@ -34,6 +45,7 @@ export default function DeleteCarModal({ isOpen, onClose, onDelete }: Props) {
     <Modal isOpen={isOpen} onClose={handleClose}>
       <div className="space-y-6">
         <h2 className="text-xl font-semibold text-main-foreground">Delete car</h2>
+        {error && <Error>{error}</Error>}
         <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
           <div className="space-y-2">
             <label htmlFor="delete-id" className="text-sm font-medium text-main-foreground">

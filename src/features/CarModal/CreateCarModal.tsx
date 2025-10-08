@@ -95,7 +95,6 @@ export default function CreateCarModal({ isOpen, onClose, onSubmit }: Props) {
             <Input
               id="create-price"
               type="number"
-              step="0.01"
               placeholder="Enter price"
               {...register("price", { valueAsNumber: true })}
             />
