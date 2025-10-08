@@ -14,10 +14,14 @@ export default function App() {
         <Provider>
           {cars => (
             <CarsProvider initialCars={cars}>
-              <div className="flex flex-col gap-4">
-                <TableControl />
-                <TableView cars={cars} />
-                <MapView cars={cars} />
+              <div className="flex flex-col gap-4 h-full">
+                <div className="flex flex-col gap-4 flex-1">
+                  <TableControl />
+                  <TableView cars={cars} />
+                </div>
+                <div className="flex-1 min-h-96">
+                  <MapView cars={cars} />
+                </div>
               </div>
             </CarsProvider>
           )}
