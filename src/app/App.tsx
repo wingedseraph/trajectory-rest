@@ -17,7 +17,7 @@ export default function App() {
               <div className="flex flex-col gap-4">
                 <TableControl />
                 <TableView cars={cars} />
-                <MapView />
+                <MapView cars={cars} />
               </div>
             </CarsProvider>
           )}
