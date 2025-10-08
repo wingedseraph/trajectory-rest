@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Car } from "@/lib/apiTypes";
+import type { Car } from "@/api/getCars.types";
 import { use } from "react";
 
 import { getCars } from "@/api/getCars";

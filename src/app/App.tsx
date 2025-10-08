@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { Provider } from "@/app/provider";
+import { CarsProvider } from "@/app/store";
 import MapView from "@/features/MapView/MapView";
 import TableControl from "@/features/TableControl/TableControl";
 import TableView from "@/features/TableView/TableView";
@@ -12,11 +13,13 @@ export default function App() {
       <Suspense fallback={<Spinner />}>
         <Provider>
           {cars => (
-            <>
-              <TableControl />
-              <TableView cars={cars} />
-              <MapView />
-            </>
+            <CarsProvider initialCars={cars}>
+              <div className="flex flex-col gap-4">
+                <TableControl />
+                <TableView cars={cars} />
+                <MapView />
+              </div>
+            </CarsProvider>
           )}
         </Provider>
       </Suspense>
